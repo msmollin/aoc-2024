@@ -31,18 +31,57 @@ import Testing
     
 // Functionality
 
+typealias Level = Int
 struct Report {
     let levels: [Level]
     
     func isSafe() -> Bool {
-        false
+        if levels[0] < levels[1] {
+            return testValueMatchesIncreasingSafetyRules(levelIndex: 1)
+        } else {
+            return testValueMatchesDecreasingSafetyRules(levelIndex: 1)
+        }
+    }
+    
+    private func testValueMatchesIncreasingSafetyRules(levelIndex: Int) -> Bool {
+        //Mostly here out of paranoia
+        if levelIndex == 0 {
+            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        }
+        let currentValue = levels[levelIndex]
+        let previousValue = levels[levelIndex - 1]
+        if currentValue > previousValue &&
+           currentValue - previousValue <= 3 {
+            if levelIndex == levels.count - 1 {
+                print("Report is safe: \(levels)")
+                return true
+            }
+            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
+        }
+        return false
+    }
+    
+    private func testValueMatchesDecreasingSafetyRules(levelIndex: Int) -> Bool {
+        //Mostly here out of paranoia
+        if levelIndex == 0 {
+            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        }
+        let currentValue = levels[levelIndex]
+        let previousValue = levels[levelIndex - 1]
+        if currentValue < previousValue &&
+            previousValue - currentValue <= 3 {
+            if levelIndex == levels.count - 1 {
+                print("Report is safe: \(levels)")
+                return true
+            }
+            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        }
+        return false
     }
 }
 
-typealias Level = Int
-
 func numberOfSafeReports(_ reports: [Report]) -> Int {
-    0
+    reports.filter({ $0.isSafe() }).count
 }
 
 
@@ -50,8 +89,13 @@ func numberOfSafeReports(_ reports: [Report]) -> Int {
 
 struct day2tests {
     
-    @Test func testReportIsSafe() {
+    @Test func testDescendingReportIsSafe() {
         let report = Report(levels: [7, 6, 4, 2, 1])
+        #expect(report.isSafe())
+    }
+    
+    @Test func testAscendingReportIsSafe() {
+        let report = Report(levels: [1, 3, 6, 7, 9])
         #expect(report.isSafe())
     }
     
