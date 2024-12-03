@@ -23,9 +23,22 @@
 		B51BBBB82CFF5813001F6945 /* day1tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = day1tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B51BBBC02CFF976D001F6945 /* Exceptions for "day1" folder in "day1tests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				main.swift,
+			);
+			target = B51BBBB72CFF5813001F6945 /* day1tests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B51BBBAA2CFF5208001F6945 /* day1 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B51BBBC02CFF976D001F6945 /* Exceptions for "day1" folder in "day1tests" target */,
+			);
 			path = day1;
 			sourceTree = "<group>";
 		};
