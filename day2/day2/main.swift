@@ -33,7 +33,7 @@ print("Number of safe reports: \(numberOfSafeReports(reports: reports))\n")
 typealias Level = Int
 class Report {
     let levels: [Level]
-    private var hasBeenDampened = false
+    private var dampnedIndex: Int?
     
     init(levels: [Level]) {
         self.levels = levels
@@ -41,54 +41,60 @@ class Report {
     
     func isSafe() -> Bool {
         if levels[0] < levels[1] {
-            return testValueMatchesIncreasingSafetyRules(levelIndex: 1)
+            return testValueMatchesIncreasingSafetyRules(levelIndex: 0)
         } else {
-            return testValueMatchesDecreasingSafetyRules(levelIndex: 1)
+            return testValueMatchesDecreasingSafetyRules(levelIndex: 0)
         }
     }
     
     private func testValueMatchesIncreasingSafetyRules(levelIndex: Int) -> Bool {
-        //Mostly here out of paranoia
-        if levelIndex == 0 {
-            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        if levelIndex == levels.count - 1 {
+            print("Report is safe: \(levels)")
+            return true
         }
-        let currentValue = levels[levelIndex]
-        let previousValue = levels[levelIndex - 1]
-        if currentValue > previousValue &&
-            currentValue - previousValue <= 3 {
-            if levelIndex == levels.count - 1 {
-                print("Report is safe: \(levels)")
-                return true
-            }
+        
+        let currentValue: Int
+        if let index = dampnedIndex, index == levelIndex {
+            currentValue = levels[levelIndex-1]
+        }else {
+            currentValue = levels[levelIndex]
+        }
+        
+        let nextValue = levels[levelIndex + 1]
+        if currentValue < nextValue &&
+            nextValue - currentValue <= 3 {
             return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
-        } else if hasBeenDampened == false {
-            hasBeenDampened = true
-            // The rules state "except if removing a single level from an unsafe report would make it safe",
+        } else if dampnedIndex == nil {
+            dampnedIndex = levelIndex + 1
+            // The rules state "except if removing a singlxe level from an unsafe report would make it safe",
             // which here should just mean skipping the current check.
-            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
+            return testValueMatchesIncreasingSafetyRules(levelIndex: dampnedIndex!)
         }
         return false
     }
     
     private func testValueMatchesDecreasingSafetyRules(levelIndex: Int) -> Bool {
-        //Mostly here out of paranoia
-        if levelIndex == 0 {
-            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        if levelIndex == levels.count - 1 {
+            print("Report is safe: \(levels)")
+            return true
         }
-        let currentValue = levels[levelIndex]
-        let previousValue = levels[levelIndex - 1]
-        if currentValue < previousValue &&
-            previousValue - currentValue <= 3 {
-            if levelIndex == levels.count - 1 {
-                print("Report is safe: \(levels)")
-                return true
-            }
+        
+        let currentValue: Int
+        if let index = dampnedIndex, index == levelIndex {
+            currentValue = levels[levelIndex-1]
+        }else {
+            currentValue = levels[levelIndex]
+        }
+
+        let nextValue = levels[levelIndex + 1]
+        if currentValue > nextValue &&
+            currentValue - nextValue <= 3 {
             return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
-        } else if hasBeenDampened == false {
-            hasBeenDampened = true
+        } else if dampnedIndex == nil {
+            dampnedIndex = levelIndex + 1
             // The rules state "except if removing a single level from an unsafe report would make it safe",
             // which here should just mean skipping the current check.
-            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
+            return testValueMatchesDecreasingSafetyRules(levelIndex: dampnedIndex!)
         }
         return false
     }
