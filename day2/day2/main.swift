@@ -59,15 +59,12 @@ class Report {
         
         let nextValue = levels[levelIndex + 1]
         
-        if isIncreasing {
-            if currentValue < nextValue && nextValue - currentValue <= 3 {
+        let increasingCheck = isIncreasing && currentValue < nextValue
+        let decreasingCheck = !isIncreasing && currentValue > nextValue
+        
+        if abs(nextValue - currentValue) <= 3,
+           increasingCheck || decreasingCheck {
                 return testValueMatchesSafetyRules(levelIndex: levelIndex + 1, isIncreasing: isIncreasing)
-            }
-        } else {
-            if currentValue > nextValue &&
-                currentValue - nextValue <= 3 {
-                return testValueMatchesSafetyRules(levelIndex: levelIndex + 1, isIncreasing: isIncreasing)
-            }
         }
         // If we didn't hit the above, time to damp a level
         if dampnedIndex == nil {
