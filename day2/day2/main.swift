@@ -40,11 +40,8 @@ class Report {
     }
     
     func isSafe() -> Bool {
-        if levels[0] < levels[1] {
-            return testValueMatchesSafetyRules(levelIndex: 0, isIncreasing: true)
-        } else {
-            return testValueMatchesSafetyRules(levelIndex: 0, isIncreasing: false)
-        }
+        testValueMatchesSafetyRules(levelIndex: 0,
+                                    isIncreasing: levels[0] < levels[1])
     }
     
     private func testValueMatchesSafetyRules(levelIndex: Int, isIncreasing: Bool) -> Bool {
