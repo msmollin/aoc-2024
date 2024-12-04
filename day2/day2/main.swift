@@ -24,13 +24,20 @@ data.enumerateLines(invoking: { line, _ in
     reports.append(Report(levels: levels))
 })
 
-print("Number of safe reports: \(reports.filter({$0.isSafe()}).count)\n")
+//print("Number of safe reports: \(reports.filter({$0.isSafe()}).count)\n")
+
+print("Number of safe reports: \(numberOfSafeReports(reports: reports))\n")
 
 // Functionality
 
 typealias Level = Int
-struct Report {
+class Report {
     let levels: [Level]
+    private var hasBeenDampened = false
+    
+    init(levels: [Level]) {
+        self.levels = levels
+    }
     
     func isSafe() -> Bool {
         if levels[0] < levels[1] {
@@ -54,6 +61,11 @@ struct Report {
                 return true
             }
             return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
+        } else if hasBeenDampened == false {
+            hasBeenDampened = true
+            // The rules state "except if removing a single level from an unsafe report would make it safe",
+            // which here should just mean skipping the current check.
+            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
         }
         return false
     }
@@ -72,11 +84,15 @@ struct Report {
                 return true
             }
             return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
+        } else if hasBeenDampened == false {
+            hasBeenDampened = true
+            // The rules state "except if removing a single level from an unsafe report would make it safe",
+            // which here should just mean skipping the current check.
+            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
         }
         return false
     }
 }
-
-func numberOfSafeReports(_ reports: [Report]) -> Int {
+func numberOfSafeReports(reports: [Report]) -> Int {
     reports.filter({ $0.isSafe() }).count
 }
