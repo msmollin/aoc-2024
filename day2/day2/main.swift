@@ -41,13 +41,13 @@ class Report {
     
     func isSafe() -> Bool {
         if levels[0] < levels[1] {
-            return testValueMatchesIncreasingSafetyRules(levelIndex: 0)
+            return testValueMatchesSafetyRules(levelIndex: 0, isIncreasing: true)
         } else {
-            return testValueMatchesDecreasingSafetyRules(levelIndex: 0)
+            return testValueMatchesSafetyRules(levelIndex: 0, isIncreasing: false)
         }
     }
     
-    private func testValueMatchesIncreasingSafetyRules(levelIndex: Int) -> Bool {
+    private func testValueMatchesSafetyRules(levelIndex: Int, isIncreasing: Bool) -> Bool {
         if levelIndex == levels.count - 1 {
             print("Report is safe: \(levels)")
             return true
@@ -61,40 +61,23 @@ class Report {
         }
         
         let nextValue = levels[levelIndex + 1]
-        if currentValue < nextValue &&
-            nextValue - currentValue <= 3 {
-            return testValueMatchesIncreasingSafetyRules(levelIndex: levelIndex + 1)
-        } else if dampnedIndex == nil {
+        
+        if isIncreasing {
+            if currentValue < nextValue && nextValue - currentValue <= 3 {
+                return testValueMatchesSafetyRules(levelIndex: levelIndex + 1, isIncreasing: isIncreasing)
+            }
+        } else {
+            if currentValue > nextValue &&
+                currentValue - nextValue <= 3 {
+                return testValueMatchesSafetyRules(levelIndex: levelIndex + 1, isIncreasing: isIncreasing)
+            }
+        }
+        // If we didn't hit the above, time to damp a level
+        if dampnedIndex == nil {
             dampnedIndex = levelIndex + 1
             // The rules state "except if removing a singlxe level from an unsafe report would make it safe",
             // which here should just mean skipping the current check.
-            return testValueMatchesIncreasingSafetyRules(levelIndex: dampnedIndex!)
-        }
-        return false
-    }
-    
-    private func testValueMatchesDecreasingSafetyRules(levelIndex: Int) -> Bool {
-        if levelIndex == levels.count - 1 {
-            print("Report is safe: \(levels)")
-            return true
-        }
-        
-        let currentValue: Int
-        if let index = dampnedIndex, index == levelIndex {
-            currentValue = levels[levelIndex-1]
-        }else {
-            currentValue = levels[levelIndex]
-        }
-
-        let nextValue = levels[levelIndex + 1]
-        if currentValue > nextValue &&
-            currentValue - nextValue <= 3 {
-            return testValueMatchesDecreasingSafetyRules(levelIndex: levelIndex + 1)
-        } else if dampnedIndex == nil {
-            dampnedIndex = levelIndex + 1
-            // The rules state "except if removing a single level from an unsafe report would make it safe",
-            // which here should just mean skipping the current check.
-            return testValueMatchesDecreasingSafetyRules(levelIndex: dampnedIndex!)
+            return testValueMatchesSafetyRules(levelIndex: dampnedIndex!, isIncreasing: isIncreasing)
         }
         return false
     }

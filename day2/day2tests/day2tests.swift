@@ -65,9 +65,12 @@ struct day2tests {
         #expect(report.isSafe())
     }
     
-    @Test func testAlwaysFailingTest() {
+    @Test func testAlwaysFailingIncreasingTest() {
         let report = Report(levels: [1, 2, 7, 8, 9])
         #expect(!report.isSafe())
+    }
+    
+    @Test func testAlwaysFailingDecreasingTest() {
         let report2 = Report(levels: [9, 7, 6, 2, 1])
         #expect(!report2.isSafe())
     }
